@@ -1,7 +1,7 @@
 # Stage 1: Install dependencies
-FROM node:18-alpine AS dependencies
+FROM node:18-alpine
 
-WORKDIR /app
+WORKDIR /backend
 
 COPY package*.json ./
 

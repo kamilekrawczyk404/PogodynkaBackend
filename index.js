@@ -14,7 +14,7 @@ app.use((req, res, next) => {
 })
 
 app.get('/', (req, res) => {
-    res.send("Weather app backend API");
+    res.send("Weather app backend API :)");
 })
 
 app.get('/api/users', async (req, res) => {
