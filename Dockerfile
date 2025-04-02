@@ -9,4 +9,6 @@ RUN npm install
 
 COPY . .
 
-CMD ["sh", "-c", "npm run db:deploy && npm run dev"]
+EXPOSE 3000
+
+CMD ["sh", "-c", "npm run db:deploy && npm run start"]
