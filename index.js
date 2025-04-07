@@ -15,30 +15,45 @@ app.use((req, res, next) => {
 
 const apiKey = "d855022feded1934f8590f123da7b216";
 
-const coordinates = {
-  lat: "40.741895",
-  lon: "-73.989308",
-};
-
-const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${apiKey}`;
-
 app.get("/", (req, res) => {
   res.send("Weather app backend API :)");
 });
 
-app.get("/api/weather", async (req, res) => {
-  await fetch(apiUrl)
-    .then((apiResponse) => {
-      if (apiResponse.ok) {
-        return apiResponse.json();
-      }
-    })
-    .then((responseJson) => {
-      res.status(200).send(responseJson);
-    })
-    .catch((error) => {
-      res.status(500).send({ error });
-    });
+app.get("/api/geo", async (req, res) => {
+  const city = req.query.city || "Gliwice";
+
+  const geoUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+
+  try {
+    const geoResponse = await fetch(geoUrl);
+    if (!geoResponse.ok) {
+      throw new Error("Nie udało się pobrać danych geolokalizacji.");
+    }
+
+    const geoData = await geoResponse.json();
+    const lat = geoData.coord.lat;
+    const lon = geoData.coord.lon;
+
+    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+    const forecastResponse = await fetch(forecastUrl);
+
+    if (!forecastResponse.ok) {
+      throw new Error("Nie udało się pobrać prognozy pogody.");
+    }
+
+    const forecastData = await forecastResponse.json();
+
+    // Dodaj nazwę miasta do forecastData — żeby frontend miał dostęp
+    forecastData.city = {
+      ...forecastData.city,
+      name: geoData.name,
+    };
+
+    res.status(200).json(forecastData);
+  } catch (error) {
+    console.error("Błąd w API:", error.message);
+    res.status(500).json({ error: error.message }); // <- Zmienione z `send` na `json`
+  }
 });
 
 app.get("/api/users", async (req, res) => {
