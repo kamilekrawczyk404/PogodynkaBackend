@@ -18,6 +18,7 @@ model User {
   login         String          @unique
   password      String
   name          String?
+  homeLocation  Json?
   searchHistory SearchHistory[]
   createdAt     DateTime        @default(now())
 }
@@ -26,12 +27,9 @@ model SearchHistory {
   id          Int      @id @default(autoincrement())
   userId      Int
   user        User     @relation(fields: [userId], references: [id])
-  city        String
-  lat         Float
-  lon         Float
   createdAt   DateTime @default(now())
   favourite   Boolean   @default(false)
-  home        Boolean   @default(false)
+  // home        Boolean   @default(false)
   // Store api data as a single json
   // We don't want to create multiple columns for seperately storing the data
   weatherData Json
