@@ -29,8 +29,5 @@ model SearchHistory {
   user        User     @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())
   favourite   Boolean   @default(false)
-  // home        Boolean   @default(false)
-  // Store api data as a single json
-  // We don't want to create multiple columns for seperately storing the data
   weatherData Json
 }
